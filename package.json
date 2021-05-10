@@ -1,0 +1,38 @@
+{
+  "name": "orchestrator",
+  "version": "1.0.0",
+  "description": "Orchestrate different processes with compensations and retries.",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "node ./build/index.js",
+    "dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "lint": "eslint src --ext .ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JIGutierrez/orchestrate.git"
+  },
+  "keywords": [
+    "orchestrate",
+    "saga",
+    "microservice"
+  ],
+  "author": "JIGutierrez",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/JIGutierrez/orchestrate/issues"
+  },
+  "homepage": "https://github.com/JIGutierrez/orchestrate#readme",
+  "devDependencies": {
+    "@types/node": "^15.0.2",
+    "eslint": "^7.26.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.3.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  }
+}
