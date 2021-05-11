@@ -2,14 +2,14 @@ type GenericFunction<In, Out> = (data: In) => Out | Promise<Out>;
 
 export class Action<I, O> {
   private executionFn: GenericFunction<I, O>;
-  private compensation?: (data: O, previousData: I, err?: any) => any;
-  private retryFn?: GenericFunction<any, boolean>;
+  private compensation?: (data: O, previousData: I, err?: Error) => any;
+  private retryFn?: GenericFunction<Error, boolean>;
   private next?: Action<O, any>;
 
   constructor(
     executionFn: GenericFunction<I, O>,
     compensation?: (data: O, previousData: I, err?: any) => any,
-    retryFn?: GenericFunction<any, boolean>
+    retryFn?: GenericFunction<Error, boolean>
   ) {
     this.executionFn = executionFn;
     this.compensation = compensation;
@@ -36,7 +36,7 @@ export class Action<I, O> {
         return await this.next.execute<N>(newData);
       } catch (err) {
         if (this.compensation) {
-          console.log(await this.compensation(newData, data, err));
+          await this.compensation(newData, data, err);
         }
         throw err;
       }
@@ -51,14 +51,14 @@ export class Action<I, O> {
     this.next = action;
   }
 
-  compensate(compensation: (data: O, previousData: I, err?: any) => any) {
+  compensate(compensation: (data: O, previousData: I, err?: Error) => any) {
     if (this.compensation) {
       throw new Error('Compensation already exists.');
     }
     this.compensation = compensation;
   }
 
-  retry(retryFn: GenericFunction<any, boolean>) {
+  retry(retryFn: GenericFunction<Error, boolean>) {
     if (this.retryFn) {
       throw new Error('Retry function already exists.');
     }
