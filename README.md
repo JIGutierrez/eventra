@@ -35,3 +35,9 @@ const main = async () => {
   }
 };
 ```
+
+## Todo list:
+
+- Document properly
+- Testing
+- Retry function maker for common use cases (timeouts, number of retries)
