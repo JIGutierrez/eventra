@@ -1,36 +1,67 @@
 type GenericFunction<In, Out> = (data: In) => Out | Promise<Out>;
 
 export class Action<I, O> {
-  executionFn: GenericFunction<I, O>;
-  compensation?: Action<any, any>;
-  retryFn?: GenericFunction<any, boolean>;
-  previousAction?: Action<any, I>;
-  next?: Action<O, any>;
+  private executionFn: GenericFunction<I, O>;
+  private compensation?: (data: O, previousData: I, err?: any) => any;
+  private retryFn?: GenericFunction<any, boolean>;
+  private next?: Action<O, any>;
 
   constructor(
     executionFn: GenericFunction<I, O>,
-    compensation?: Action<O, I>,
-    retryFn?: GenericFunction<any, boolean>,
-    previousAction?: Action<any, I>
+    compensation?: (data: O, previousData: I, err?: any) => any,
+    retryFn?: GenericFunction<any, boolean>
   ) {
     this.executionFn = executionFn;
     this.compensation = compensation;
     this.retryFn = retryFn;
-    this.previousAction = previousAction;
   }
 
-  async execute(data: I): Promise<O> {
+  async execute<N>(data: I): Promise<O | N> {
+    let newData: O;
     try {
-      const newData = await this.executionFn(data);
-      if (this.next) {
-        return this.next.execute(newData);
-      }
-      return newData;
+      newData = await this.executionFn(data);
     } catch (err) {
-      if (this.retryFn && this.retryFn(err)) {
-        return this.execute(data);
+      if (this.retryFn && (await this.retryFn(err))) {
+        return await this.execute(data);
+      } else {
+        throw err;
       }
-      throw err;
     }
+    return await this.executeNext<N>(data, newData);
+  }
+
+  private async executeNext<N>(data: I, newData: O): Promise<O | N> {
+    if (this.next) {
+      try {
+        return await this.next.execute<N>(newData);
+      } catch (err) {
+        if (this.compensation) {
+          console.log(await this.compensation(newData, data, err));
+        }
+        throw err;
+      }
+    }
+    return newData;
+  }
+
+  setNext(action: Action<O, any>) {
+    if (this.next) {
+      throw new Error('Next action already exists.');
+    }
+    this.next = action;
+  }
+
+  compensate(compensation: (data: O, previousData: I, err?: any) => any) {
+    if (this.compensation) {
+      throw new Error('Compensation already exists.');
+    }
+    this.compensation = compensation;
+  }
+
+  retry(retryFn: GenericFunction<any, boolean>) {
+    if (this.retryFn) {
+      throw new Error('Retry function already exists.');
+    }
+    this.retryFn = retryFn;
   }
 }
