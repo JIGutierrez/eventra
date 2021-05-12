@@ -16,7 +16,7 @@ const d = new Action((s: string) => {
   if (Math.random() < 0.1) {
     return 'Holi' + s;
   }
-  throw new Error('error Jejesdfgs');
+  throw new Error('error');
 });
 
 const main = async () => {
