@@ -5,9 +5,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
-    "dist/index.js",
-    "dist/actions.js",
-    "dist/events.js"
+    "build/"
   ],
   "scripts": {
     "dev": "nodemon",
