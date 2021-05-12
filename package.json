@@ -2,12 +2,12 @@
   "name": "eventra",
   "version": "1.0.1",
   "description": "Orchestrate different processes with compensations and retries.",
-  "main": "build/index.ts",
+  "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
-    "dist/index.ts",
-    "dist/actions.ts",
-    "dist/events.ts"
+    "dist/index.js",
+    "dist/actions.js",
+    "dist/events.js"
   ],
   "scripts": {
     "dev": "nodemon",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JIGutierrez/orchestrate.git"
+    "url": "git+https://github.com/JIGutierrez/eventra.git"
   },
   "keywords": [
     "orchestrate",
@@ -27,9 +27,9 @@
   "author": "JIGutierrez",
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/JIGutierrez/orchestrate/issues"
+    "url": "https://github.com/JIGutierrez/eventra/issues"
   },
-  "homepage": "https://github.com/JIGutierrez/orchestrate#readme",
+  "homepage": "https://github.com/JIGutierrez/eventra#readme",
   "devDependencies": {
     "@types/node": "^15.0.2",
     "eslint": "^7.26.0",
