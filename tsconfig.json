@@ -5,6 +5,7 @@
     "lib": ["es6"],
     "declaration": true,
     "removeComments": false,
+    "esModuleInterop": true,
     "stripInternal": true,
     "strict": true,
     "alwaysStrict": true,
