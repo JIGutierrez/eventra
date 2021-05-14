@@ -31,7 +31,6 @@ const main = async () => {
 };
 
 main();
-
 ```
 
 ## Todo list:

@@ -1,6 +1,6 @@
 import { Action } from './actions';
 
-export class Event<I = void, O = void> {
+export class Eventra<I = void, O = void> {
   private name: string;
   private actions: Action<any, any>[];
 
@@ -10,14 +10,14 @@ export class Event<I = void, O = void> {
   }
 
   static new<U, V>(name: string, action: Action<U, V>) {
-    return new Event<U, V>(name, [action]);
+    return new Eventra<U, V>(name, [action]);
   }
 
-  use<V>(action: Action<O, V>): Event<I, V> {
+  use<V>(action: Action<O, V>): Eventra<I, V> {
     const lastAction = this.actions[this.actions.length - 1];
     lastAction.setNext(action);
 
-    const newEvent = new Event<I, V>(this.name, [...this.actions, action]);
+    const newEvent = new Eventra<I, V>(this.name, [...this.actions, action]);
 
     return newEvent;
   }
