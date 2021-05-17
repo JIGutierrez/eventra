@@ -3,39 +3,75 @@
 ## Usage
 
 ```ts
-import { Action } from './actions';
-import { Event } from './events';
+import { Action, Eventra, Retry } from 'eventra';
 
-const a = new Action((a: number) => a + 1);
-a.compensate((n) => n - 1);
-const b = new Action((a: number) => `${a * 2}`);
-b.compensate((s) => parseInt(s) / 2);
-const c = new Action((a: string) => a + '3');
-c.compensate((s) => s.slice(0, s.length - 1));
-const d = new Action((s: string) => {
-  if (Math.random() < 0.1) {
-    return 'Holi' + s;
-  }
-  throw new Error('error');
-});
+// This is just for demonstrative purposes. Please don't create users this way.
 
-const main = async () => {
-  let event = Event.new('sum', a).use(b).use(c).use(d);
+// Interfaces, arbitrary functions and errors. --------------------------------
 
-  try {
-    const result = await event.execute(0);
-    console.log(result);
-  } catch (err) {
-    console.log(err.message);
-  }
+interface myUserInterface {
+  username: string;
+}
+
+interface myUserInterfaceWithId extends myUserInterface {
+  id: number;
+}
+
+const postToUserMicroservice = async (data: myUserInterfaceWithId) => {
+  /* ... */
+};
+const deleteFromUserMicroservice = async (data: myUserInterfaceWithId) => {
+  /*...*/
 };
 
-main();
+class MyHandledError extends Error {}
 
+// Action declaration ---------------------------------------------------------
+
+let lastUserId = 134;
+
+const updateUserCount = Action.new((userData: myUserInterface) => {
+  lastUserId++;
+  return { ...userData, id: lastUserId };
+}).compensate(() => {
+  lastUserId--;
+});
+
+const writeToMicroservice = Action.new(
+  async (userData: myUserInterfaceWithId) => {
+    await postToUserMicroservice(userData);
+    return userData;
+  }
+)
+  .retry(
+    Retry.new({
+      amount: 3,
+      delay: 100,
+      custom: (err) => {
+        if (err instanceof MyHandledError) {
+          return true;
+        }
+        return false;
+      },
+    })
+  )
+  .compensate(async (userData) => {
+    await deleteFromUserMicroservice(userData.id);
+  });
+
+const greetUser = Action.new((data: myUserInterfaceWithId) => {
+  console.log(`Hello, ${data.username}!`);
+});
+
+// Event declaration ----------------------------------------------------------
+
+const createUserEvent = Eventra.new(updateUserCount)
+  .use(writeToMicroservice)
+  .use(greetUser);
+
+// Event execution ------------------------------------------------------------
+
+await createUserEvent.execute({ username: 'John' });
 ```
 
-## Todo list:
-
-- Document properly
-- Testing
-- Retry function maker for common use cases (timeouts, number of retries)
+In a real word scenario, it's recommended to split these up into separate files, typically executing the Eventra instance within a web server route, for instance.
