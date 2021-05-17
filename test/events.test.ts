@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { Action, Eventra } from '../src';
 
 
-test('Event executes and compensates', async (t) => {
+test('Event throws and compensates', async (t) => {
   const fn1 = sinon.fake();
   const fn2 = sinon.fake.throws(new Error());
   const fn1Compensate = sinon.fake();
@@ -21,3 +21,9 @@ test('Event executes and compensates', async (t) => {
 
 })
 
+test('Event returns on completion', async (t) => {
+  const fn = sinon.fake.returns(1);
+  const action = Action.new(fn);
+  const event = Eventra.new<void, number>(action);
+  t.is(await event.execute(), 1)
+})

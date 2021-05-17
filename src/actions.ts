@@ -5,13 +5,13 @@ type GenericFunction<In, Out> = (data: In) => Out | Promise<Out>;
  */
 export class Action<I, O> {
   private executionFn: GenericFunction<I, O>;
-  private compensation?: (data?: O, previousData?: I, err?: Error) => any;
+  private compensation?: (data: O, previousData: I, err: Error) => any;
   private retryFn?: GenericFunction<Error, boolean>;
   private next?: Action<O, any>;
 
   private constructor(
     executionFn: GenericFunction<I, O>,
-    compensation?: (data?: O, previousData?: I, err?: any) => any,
+    compensation?: (data: O, previousData: I, err: any) => any,
     retryFn?: GenericFunction<Error, boolean>
   ) {
     this.executionFn = executionFn;
@@ -28,7 +28,7 @@ export class Action<I, O> {
    */
   static new<I, O>(
     executionFn: GenericFunction<I, O>,
-    compensation?: (data?: O, previousData?: I, err?: any) => any,
+    compensation?: (data: O, previousData: I, err: any) => any,
     retryFn?: GenericFunction<Error, boolean>) {
     return new Action<I, O>(executionFn, compensation, retryFn)
   }
@@ -85,7 +85,7 @@ export class Action<I, O> {
    * @param compensation Function that receives this action's output, input, and the thrown error.
    * @returns Itself
    */
-  compensate(compensation: (data?: O, previousData?: I, err?: Error) => any): Action<I, O> {
+  compensate(compensation: (data: O, previousData: I, err: Error) => any): Action<I, O> {
     if (this.compensation) {
       throw new Error('Compensation already exists.');
     }
