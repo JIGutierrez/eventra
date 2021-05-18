@@ -1,6 +1,6 @@
 {
   "name": "eventra",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Orchestrate different processes with compensations and retries.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
