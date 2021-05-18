@@ -1,9 +1,8 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    types: [opened]
     branches: [main]
 
 jobs:
@@ -20,6 +19,3 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

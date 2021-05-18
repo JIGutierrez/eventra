@@ -30,7 +30,7 @@ export class Retry {
   }
 
   /**
-   * 
+   * Creates a new retry function.
    * @param options Options for the retry function with the following (optional) properties:
    * @returns New retry function.
    */

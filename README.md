@@ -1,5 +1,13 @@
 # Eventra
 
+![npm bundle size](https://img.shields.io/bundlephobia/min/eventra)
+
+## Installation
+
+```
+npm install eventra
+```
+
 ## Usage
 
 ```ts
