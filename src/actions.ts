@@ -29,8 +29,9 @@ export class Action<I, O> {
   static new<I, O>(
     executionFn: GenericFunction<I, O>,
     compensation?: (data: O, previousData: I, err: any) => any,
-    retryFn?: GenericFunction<Error, boolean>) {
-    return new Action<I, O>(executionFn, compensation, retryFn)
+    retryFn?: GenericFunction<Error, boolean>
+  ) {
+    return new Action<I, O>(executionFn, compensation, retryFn);
   }
 
   /**
@@ -43,7 +44,7 @@ export class Action<I, O> {
     try {
       newData = await this.executionFn(data);
     } catch (err) {
-      if (this.retryFn && (await this.retryFn(err))) {
+      if (this.retryFn && (await this.retryFn(err as Error))) {
         return await this.execute(data);
       } else {
         throw err;
@@ -52,14 +53,13 @@ export class Action<I, O> {
     return await this.executeNext<N>(data, newData);
   }
 
-
   private async executeNext<N>(data: I, newData: O): Promise<O | N> {
     if (this.next) {
       try {
         return await this.next.execute<N>(newData);
       } catch (err) {
         if (this.compensation) {
-          await this.compensation(newData, data, err);
+          await this.compensation(newData, data, err as Error);
         }
         throw err;
       }
@@ -85,7 +85,9 @@ export class Action<I, O> {
    * @param compensation Function that receives this action's output, input, and the thrown error.
    * @returns Itself
    */
-  compensate(compensation: (data: O, previousData: I, err: Error) => any): Action<I, O> {
+  compensate(
+    compensation: (data: O, previousData: I, err: Error) => any
+  ): Action<I, O> {
     if (this.compensation) {
       throw new Error('Compensation already exists.');
     }
